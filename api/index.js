@@ -7,7 +7,6 @@ const endpoints = require('./src/endpoints');
 
 const api = express();
 
-api.use(express.json());
 api.use(cookieParser());
 api.use(morgan('combined'));
 api.use("/api", endpoints);
