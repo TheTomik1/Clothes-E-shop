@@ -3,6 +3,36 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, { apiVersion: '2
 const {json, raw} = require("express");
 require('dotenv').config({ path: './.env' });
 
+const formatPrice = (priceInCents) => {
+    const priceInEuros = priceInCents / 100;
+    return priceInEuros.toLocaleString('en-US', { style: 'currency', currency: 'EUR' });
+};
+
+router.get("/products", async (req, res) => {
+    try {
+        const products = await stripe.prices.list({
+            active: true
+        }, { apiKey: process.env.STRIPE_SECRET_KEY });
+
+        const productDetails = await Promise.all(products.data.map(async (product) => {
+            const productData = await stripe.products.retrieve(product.product, { apiKey: process.env.STRIPE_SECRET_KEY });
+            const productPrice = await stripe.prices.retrieve(product.id, { apiKey: process.env.STRIPE_SECRET_KEY });
+
+            return {
+                id: product.id,
+                price: formatPrice(productPrice.unit_amount),
+                name: productData.name,
+                description: productData.description,
+                images: productData.images
+            };
+        }));
+
+        await res.status(200).send({ data: productDetails });
+    } catch (error) {
+        await res.status(500).send({ error: error.message });
+    }
+});
+
 router.post('/checkout', json(), async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
