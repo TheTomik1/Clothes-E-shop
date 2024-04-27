@@ -6,17 +6,12 @@ import { useCart } from '../Context/CartContext.jsx';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState('nameAsc');
     const [searchTerm, setSearchTerm] = useState('');
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [loading, setLoading] = useState(true);
     const { cart, setCart } = useCart();
-    const productsPerPage = 15;
-
-    const indexOfLastProduct = currentPage * productsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -96,8 +91,6 @@ const Products = () => {
         );
     });
 
-    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
     return (
         <div className="bg-zinc-800 min-h-screen p-4">
             <div className="flex justify-start space-x-4 mb-12">
@@ -125,10 +118,10 @@ const Products = () => {
                       className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform">Go
                     to cart</Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                 {loading && <p className="text-white text-3xl">Loading...</p>}
-                {currentProducts.map((product) => (
-                    <div key={product.id} className="bg-zinc-700 p-4 rounded-lg shadow-md">
+                {filteredProducts.map((product) => (
+                    <div key={product.id} className="bg-zinc-700 p-4 rounded-lg shadow-md hover:scale-105 transition-transform">
                         <img src={product.images[0]} alt={product.name} className="rounded-xl w-full and h-96 object-cover"/>
                         <h2 className="text-3xl text-white font-bold pt-4">{product.name}</h2>
                         <p className="text-xl text-gray-300">{product.description ? product.description : 'No description.'}</p>

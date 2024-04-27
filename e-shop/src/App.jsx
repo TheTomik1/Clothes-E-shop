@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import {Toaster} from "react-hot-toast";
 
-import Home from "./components/home.jsx";
-import Products from "./components/Products/products.jsx";
-import Product from "./components/Products/product.jsx";
-import NoMatch from "./components/not-found.jsx";
-import Login from "./components/Auth/login.jsx";
+import Home from "./components/Home.jsx";
+import Products from "./components/Products/Products.jsx";
+import Product from "./components/Products/Product.jsx";
+import NoMatch from "./components/Not-found.jsx";
+import Login from "./components/Auth/Login.jsx";
 import {CartProvider} from "./components/Context/CartContext.jsx";
 import Cart from "./components/Cart.jsx";
 import Navbar from "./components/Navbar.jsx";

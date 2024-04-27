@@ -1,9 +1,12 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useCart} from "./Context/CartContext.jsx";
+import {Link} from "react-router-dom";
 
 export default function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { cart, setCart } = useCart();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -59,8 +62,8 @@ export default function Home() {
                         <p className="text-xl text-gray-300">{product.description ? product.description : 'No description.'}</p>
                         <p className="text-2xl text-white font-bold pb-8">{product.price}</p>
                         <div className="flex justify-between">
-                            <button className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform">Add to cart</button>
-                            <button className="bg-green-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform">Details</button>
+                            <button className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform" onClick={() => setCart([...cart, product])}>Add to cart</button>
+                            <Link className="bg-green-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform" to={`/products/${product.id}`}>Details</Link>
                         </div>
                     </div>
                 ))}
