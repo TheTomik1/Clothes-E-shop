@@ -4,11 +4,14 @@ import { FaTrash } from 'react-icons/fa';
 import axios from "axios";
 import toast from "react-hot-toast";
 import {loadStripe} from "@stripe/stripe-js";
+import {useContext} from "react";
+import AuthContext from "../contexts/AuthContext.js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISABLE_KEY);
 
 export default function Cart() {
     const { cart, setCart } = useCart();
+    const { session } = useContext(AuthContext);
 
     const handleIncrease = (id) => {
 
@@ -44,7 +47,20 @@ export default function Cart() {
     }, []);
 
     const handleCheckout = async() => {
+        if (!session) {
+            toast.error('You need to be logged in to checkout.', {
+                style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                }
+            });
+            return;
+        }
+
         const response = await axios.post('http://localhost:3000/api/checkout', {
+            userId: session.user.id,
+            email: session.user.email,
             cart: groupedCart
         });
 

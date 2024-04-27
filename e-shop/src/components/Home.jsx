@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useCart} from "./Context/CartContext.jsx";
 import {Link} from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Home() {
     const [products, setProducts] = useState([]);

@@ -7,6 +7,7 @@ import Products from "./components/Products/Products.jsx";
 import Product from "./components/Products/Product.jsx";
 import NoMatch from "./components/Not-found.jsx";
 import Login from "./components/Auth/Login.jsx";
+import Profile from "./components/Auth/Profile.jsx";
 import Cart from "./components/Cart.jsx";
 import Success from "./components/Payments/Success.jsx";
 import Cancel from "./components/Payments/Cancel.jsx";
@@ -43,6 +44,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/:id" element={<Product />} />
                     <Route path="/cart" element={<Cart />} />

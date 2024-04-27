@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
 const {json, raw} = require("express");
+const supabase = require('../supabase');
 require('dotenv').config({ path: './.env' });
 
 const formatPrice = (priceInCents) => {
@@ -11,6 +12,26 @@ const formatPrice = (priceInCents) => {
 const cleanPrice = (price) => {
     return price.replace('€', '').replace(',', '');
 };
+
+router.get("/user-receipts", async (req, res) => {
+    const emailAddr = req.query.email;
+
+    try {
+        const userReceipts = [];
+
+        const receipts = await stripe.charges.list({ limit: 10 }, { apiKey: process.env.STRIPE_SECRET_KEY });
+
+        for (let receipt of receipts["data"]) {
+            if (receipt["billing_details"]["email"] === emailAddr) {
+                userReceipts.push(receipt);
+            }
+        }
+
+        await res.status(200).send({ userReceipts });
+    } catch (error) {
+        await res.status(500).send({ error: error.message });
+    }
+});
 
 router.get("/products", async (req, res) => {
     try {
@@ -61,10 +82,28 @@ router.get("/products/:id", async (req, res) => {
 });
 
 router.post('/checkout', json(), async (req, res) => {
-    const cart = req.body.cart;
+    const { email, userId, cart } = req.body;
+
+    console.log(email);
+    console.log(userId);
+
+    if (!userId) {
+        await res.status(400).send({ error: 'User ID is missing.' });
+        return;
+    }
+
+    if (!cart || cart.length === 0) {
+        await res.status(400).send({ error: 'Cart is empty.' });
+        return;
+    }
+
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
+            metadata: {
+                user_id: userId
+            },
+            customer_email: email,
             line_items: [
                 ...cart.map((item) => ({
                     price_data: {
@@ -90,7 +129,7 @@ router.post('/checkout', json(), async (req, res) => {
     }
 });
 
-router.post('/webhook', raw({ type: 'application/json' }), async (req, res) => {
+router.post('/webhook', raw({ type: 'application/json' }), async(req, res) => {
     const rawBody = req.body;
     const signature = req.headers['stripe-signature'];
 
@@ -100,7 +139,36 @@ router.post('/webhook', raw({ type: 'application/json' }), async (req, res) => {
 
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
-            console.log(`Payment successful: ${session.id}`);
+
+            const userId = session.metadata.user_id;
+
+            const { error } = await supabase.from('stripe_customers').insert([
+                {
+                    customer_id: userId,
+                    customer_email: session.customer_details.email,
+                    customer_name: session.customer_details.name,
+                }
+            ])
+
+            if (error.message.includes('duplicate key value violates unique constraint')) {
+                await supabase.from('stripe_customers').update([
+                    {
+                        customer_email: session.customer_details.email,
+                        customer_name: session.customer_details.name,
+                    }
+                ]).match({ customer_id: userId });
+            }
+
+            await supabase.from('stripe_payments').insert([
+                {
+                    payment_id: session.id,
+                    payment_total: session.amount_total,
+                    payment_currency: session.currency,
+                    payment_customer: session.customer_details,
+                    payment_status: session.payment_status,
+                    payment_method_types: session.payment_method_types,
+                }
+            ])
         }
 
         await res.json({ received: true });
