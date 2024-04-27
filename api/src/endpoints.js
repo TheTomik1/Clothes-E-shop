@@ -8,6 +8,10 @@ const formatPrice = (priceInCents) => {
     return priceInEuros.toLocaleString('en-US', { style: 'currency', currency: 'EUR' });
 };
 
+const cleanPrice = (price) => {
+    return price.replace('€', '').replace(',', '');
+};
+
 router.get("/products", async (req, res) => {
     try {
         const products = await stripe.prices.list({
@@ -57,14 +61,24 @@ router.get("/products/:id", async (req, res) => {
 });
 
 router.post('/checkout', json(), async (req, res) => {
+    const cart = req.body.cart;
+
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
-                {
-                    price: "price_1P8kNOFd18oZCO1VCjXjOIpi",
-                    quantity: 1,
-                }
+                ...cart.map((item) => ({
+                    price_data: {
+                        currency: 'eur',
+                        product_data: {
+                            name: item.name,
+                            description: item.description,
+                            images: [item.images[0]]
+                        },
+                        unit_amount_decimal: cleanPrice(item.price) * 100
+                    },
+                    quantity: item.count
+                })),
             ],
             mode: 'payment',
             success_url: `${process.env.CLIENT_URL}/success`,
@@ -73,7 +87,7 @@ router.post('/checkout', json(), async (req, res) => {
 
         await res.json({ session });
     } catch (error) {
-        res.status(500).send({ error: error.message });
+        await res.status(500).send({ error: error.message });
     }
 });
 
