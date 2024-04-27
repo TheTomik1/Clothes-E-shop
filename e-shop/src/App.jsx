@@ -7,6 +7,8 @@ import Products from "./components/Products/products.jsx";
 import Product from "./components/Products/product.jsx";
 import NoMatch from "./components/not-found.jsx";
 import Login from "./components/Auth/login.jsx";
+import {CartProvider} from "./components/Context/CartContext.jsx";
+import Cart from "./components/Cart.jsx";
 import Navbar from "./components/Navbar.jsx";
 
 import supabase from "./utils/supabase.js";
@@ -32,16 +34,19 @@ function App() {
 
     return (
         <AuthContext.Provider value={{ session }}>
-            <Navbar />
-            <Toaster position={"top-right"} reverseOrder={false} />
+            <CartProvider>
+                <Navbar />
+                <Toaster position={"top-right"} reverseOrder={false} />
 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:id" element={<Product />} />
-                <Route path="*" element={<NoMatch />} />
-            </Routes>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/products/:id" element={<Product />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="*" element={<NoMatch />} />
+                </Routes>
+            </CartProvider>
         </AuthContext.Provider>
     )
 }

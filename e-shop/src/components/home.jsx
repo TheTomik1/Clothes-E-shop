@@ -58,6 +58,10 @@ export default function Home() {
                         <h2 className="text-3xl text-white font-bold pt-4">{product.name}</h2>
                         <p className="text-xl text-gray-300">{product.description ? product.description : 'No description.'}</p>
                         <p className="text-2xl text-white font-bold pb-8">{product.price}</p>
+                        <div className="flex justify-between">
+                            <button className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform">Add to cart</button>
+                            <button className="bg-green-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform">Details</button>
+                        </div>
                     </div>
                 ))}
             </div>

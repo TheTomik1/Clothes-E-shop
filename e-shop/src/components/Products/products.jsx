@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import toast from "react-hot-toast";
+import { useCart } from '../Context/CartContext.jsx';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ const Products = () => {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [loading, setLoading] = useState(true);
+    const { cart, setCart } = useCart();
     const productsPerPage = 15;
 
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -49,14 +51,6 @@ const Products = () => {
 
         return () => clearInterval(intervalId);
     }, []);
-
-    const handleAddToCart = (product) => {
-        // Handle add to cart
-    };
-
-    const handleCheckDetails = (product) => {
-        // Handle check details
-    };
 
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
@@ -142,7 +136,7 @@ const Products = () => {
                         <div className="flex justify-between">
                             <button
                                 className="bg-green-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform"
-                                onClick={() => handleAddToCart(product)}>Add to cart
+                                onClick={() => setCart([...cart, product])}>Add to cart
                             </button>
                             <Link
                                 className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform"

@@ -1,12 +1,14 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
+import {useCart} from "../Context/CartContext.jsx";
 
 export default function Product() {
     const {id} = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(true);
+    const { cart, setCart } = useCart();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -39,8 +41,8 @@ export default function Product() {
                 <h1 className="text-white text-5xl font-bold">{product.name}</h1>
                 <p className="text-white text-2xl">{product.description}</p>
                 <p className="text-white text-2xl">Price: {product.price}</p>
-                <button className="bg-green-500 w-48 text-white text-2xl font-bold p-2 rounded-md hover:scale-105 transition-transform">Add
-                    to cart
+                <button className="bg-green-500 w-48 text-white text-2xl font-bold p-2 rounded-md hover:scale-105 transition-transform" onClick={() => setCart([...cart, product])}>
+                    Add to cart
                 </button>
             </div>
             <div className="flex justify-center md:w-1/2">

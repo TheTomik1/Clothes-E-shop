@@ -1,15 +1,19 @@
 import {Link} from "react-router-dom";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import AuthContext from "../contexts/AuthContext.js";
 import supabase from "../utils/supabase.js";
 import toast from "react-hot-toast";
+import {useCart} from "./Context/CartContext";
 
+import { IoCart } from "react-icons/io5";
 import logo from '../images/Logo.png';
 
 const Navbar = () => {
     const session = useContext(AuthContext);
     const isLoggedIn = session.session !== null;
     const [navbarOpen, setNavbarOpen] = useState(false);
+    const { cart } = useCart();
+    const cartItems = cart.length;
 
     const toggleNavbar = () => {
         setNavbarOpen(!navbarOpen);
@@ -64,6 +68,14 @@ const Navbar = () => {
                                             Profile
                                         </p>
                                     </Link>
+                                    <Link to="/cart">
+                                        {cartItems > 0 && (
+                                            <span className="bg-red-500 text-white text rounded-full px-2 py-1 text-xs absolute -mt-1 ml-4">
+                                                {cartItems}
+                                            </span>
+                                        )}
+                                        <IoCart className="text-white text-4xl mt-1"/>
+                                    </Link>
                                 </div>
                             ) : (
                                 <div className="flex space-x-4">
@@ -89,6 +101,12 @@ const Navbar = () => {
                         <>
                             <Link to="/profile" className="text-black dark:text-white hover:bg-zinc-400 hover:dark:bg-zinc-700 block px-3 py-2 rounded-md text-2xl font-medium">
                                 Profile
+                            </Link>
+                            <Link to="/cart" className="text-black dark:text-white hover:bg-zinc-400 hover:dark:bg-zinc-700 block px-3 py-2 rounded-md text-2xl font-medium">
+                                Cart
+                                <span className="bg-red-500 text-white text rounded-full px-2 py-1 text-xs ml-4">
+                                    {cartItems}
+                                </span>
                             </Link>
                             <p onClick={handleLogout} className="text-black dark:text-white hover:bg-zinc-400 hover:dark:bg-zinc-700 block px-3 py-2 rounded-md text-2xl font-medium select-none hover:cursor-pointer">
                                 Logout
