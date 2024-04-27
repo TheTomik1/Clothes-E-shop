@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import supabase from '../../utils/supabase';
-import AuthContext from '../../contexts/AuthContext';
+import AuthContext from '../Context/AuthContext.js';
 import toast from "react-hot-toast";
 
 export default function Login() {

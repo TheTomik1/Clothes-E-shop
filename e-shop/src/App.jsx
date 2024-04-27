@@ -15,7 +15,7 @@ import Navbar from "./components/Navbar.jsx";
 import {CartProvider} from "./components/Context/CartContext.jsx";
 
 import supabase from "./utils/supabase.js";
-import AuthContext from './contexts/AuthContext';
+import AuthContext from './components/Context/AuthContext.js';
 
 import './index.css'
 

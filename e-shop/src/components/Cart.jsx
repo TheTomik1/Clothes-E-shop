@@ -4,47 +4,59 @@ import { FaTrash } from 'react-icons/fa';
 import axios from "axios";
 import toast from "react-hot-toast";
 import {loadStripe} from "@stripe/stripe-js";
-import {useContext} from "react";
-import AuthContext from "../contexts/AuthContext.js";
+import {useContext, useEffect, useState} from "react";
+import AuthContext from "./Context/AuthContext.js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISABLE_KEY);
 
 export default function Cart() {
-    const { cart, setCart } = useCart();
+    const { cart } = useCart();
     const { session } = useContext(AuthContext);
+    const [groupedCart, setGroupedCart] = useState([]);
+
+    useEffect(() => {
+        const grouped = cart.reduce((acc, item) => {
+            const existingItem = acc.find(i => i.id === item.id);
+            if (existingItem) {
+                existingItem.count += 1;
+            } else {
+                acc.push({ ...item, count: 1 });
+            }
+            return acc;
+        }, []);
+        setGroupedCart(grouped);
+    }, [cart]);
+
+    const handleRemove = (id) => {
+        setGroupedCart(currentCart => currentCart.filter(item => item.id !== id));
+    };
 
     const handleIncrease = (id) => {
-
+        setGroupedCart(currentCart => currentCart.map(item => {
+            if (item.id === id) {
+                return { ...item, count: item.count + 1 };
+            }
+            return item;
+        }));
     };
 
     const handleDecrease = (id) => {
-        const existingItem = cart.find(item => item.id === id);
-        if (existingItem.count === 1) {
-            setCart(currentCart => currentCart.filter(item => item.id !== id));
-        } else {
-            setCart(existingItem.count -= 1);
-        }
-    };
+        setGroupedCart(currentCart => currentCart.map(item => {
+            if (item.count === 1) {
+                handleRemove(id);
+            }
 
-    const handleRemove = (id) => {
-        setCart(currentCart => currentCart.filter(item => item.id !== id));
+            if (item.id === id) {
+                return { ...item, count: item.count - 1 };
+            }
+
+            return item;
+        }))
     };
 
     const cleanPrice = (price) => {
-        return price.replace('€', '').replace(',', '');
+        return price.replace('€', '').replace(',', '').trim();
     }
-
-    const groupedCart = cart.reduce((acc, item) => {
-        const existingItem = acc.find(i => i.id === item.id);
-
-        if (existingItem) {
-            existingItem.count += 1;
-        } else {
-            acc.push({...item, count: 1});
-        }
-
-        return acc;
-    }, []);
 
     const handleCheckout = async() => {
         if (!session) {

@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
-import AuthContext from "../contexts/AuthContext.js";
+import AuthContext from "./Context/AuthContext.js";
 import supabase from "../utils/supabase.js";
 import toast from "react-hot-toast";
 import {useCart} from "./Context/CartContext";
