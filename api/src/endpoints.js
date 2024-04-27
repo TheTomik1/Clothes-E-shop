@@ -48,6 +48,7 @@ router.get("/products/:id", async (req, res) => {
             name: product.name,
             description: product.description,
             images: product.images,
+            added: product.created,
             price: formatPrice(price.data[0].unit_amount),
         }});
     } catch (error) {
