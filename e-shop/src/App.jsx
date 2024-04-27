@@ -7,9 +7,11 @@ import Products from "./components/Products/Products.jsx";
 import Product from "./components/Products/Product.jsx";
 import NoMatch from "./components/Not-found.jsx";
 import Login from "./components/Auth/Login.jsx";
-import {CartProvider} from "./components/Context/CartContext.jsx";
 import Cart from "./components/Cart.jsx";
+import Success from "./components/Payments/Success.jsx";
+import Cancel from "./components/Payments/Cancel.jsx";
 import Navbar from "./components/Navbar.jsx";
+import {CartProvider} from "./components/Context/CartContext.jsx";
 
 import supabase from "./utils/supabase.js";
 import AuthContext from './contexts/AuthContext';
@@ -44,6 +46,8 @@ function App() {
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/:id" element={<Product />} />
                     <Route path="/cart" element={<Cart />} />
+                    <Route path="/success" element={<Success />} />
+                    <Route path="/cancel" element={<Cancel />} />
                     <Route path="*" element={<NoMatch />} />
                 </Routes>
             </CartProvider>

@@ -62,7 +62,6 @@ router.get("/products/:id", async (req, res) => {
 
 router.post('/checkout', json(), async (req, res) => {
     const cart = req.body.cart;
-
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -102,16 +101,6 @@ router.post('/webhook', raw({ type: 'application/json' }), async (req, res) => {
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
             console.log(`Payment successful: ${session.id}`);
-        }
-
-        if (event.type === 'checkout.subscription.updated') {
-            const subscription = event.data.object;
-            console.log(`Subscription updated: ${subscription.id}`);
-        }
-
-        if (event.type === 'checkout.subscription.deleted') {
-            const subscription = event.data.object;
-            console.log(`Subscription deleted: ${subscription.id}`);
         }
 
         await res.json({ received: true });
