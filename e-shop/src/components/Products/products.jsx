@@ -10,7 +10,7 @@ const Products = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const productsPerPage = 15;
 
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -18,8 +18,6 @@ const Products = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            setLoading(true);
-
             try {
                 const response = await axios.get('http://localhost:3000/api/products');
 
@@ -31,7 +29,6 @@ const Products = () => {
                             color: '#fff',
                         }
                     });
-                    setLoading(false);
                 }
 
                 setProducts(response.data.data);
@@ -44,7 +41,6 @@ const Products = () => {
                         color: '#fff',
                     }
                 });
-                setLoading(false);
             }
         };
 
@@ -136,7 +132,7 @@ const Products = () => {
                     to cart</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {loading && <p className="text-white text-2xl font-bold">Loading...</p>}
+                {loading && <p className="text-white text-3xl">Loading...</p>}
                 {currentProducts.map((product) => (
                     <div key={product.id} className="bg-zinc-700 p-4 rounded-lg shadow-md">
                         <img src={product.images[0]} alt={product.name} className="rounded-xl w-full and h-96 object-cover"/>
@@ -150,7 +146,7 @@ const Products = () => {
                             </button>
                             <Link
                                 className="bg-blue-500 rounded-xl font-bold p-4 text-white hover:scale-105 transition-transform"
-                                to={`/products/${product.id}`}>Check details</Link>
+                                to={`/products/${product.id}`}>Details</Link>
                         </div>
                     </div>
                 ))}

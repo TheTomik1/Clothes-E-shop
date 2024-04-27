@@ -4,6 +4,8 @@ import AuthContext from "../contexts/AuthContext.js";
 import supabase from "../utils/supabase.js";
 import toast from "react-hot-toast";
 
+import logo from '../images/Logo.png';
+
 const Navbar = () => {
     const session = useContext(AuthContext);
     const isLoggedIn = session.session !== null;
@@ -31,7 +33,7 @@ const Navbar = () => {
                     <div className="flex-shrink-0">
                         <Link to="/">
                             <img
-                                src={"https://cdn.discordapp.com/attachments/897034000034732554/897034040000858378/Logo.png"}
+                                src={logo}
                                 alt={"LOGO"}
                                 className="h-16 rounded"
                             />

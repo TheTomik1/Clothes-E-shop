@@ -19,7 +19,7 @@ router.get("/products", async (req, res) => {
             const productPrice = await stripe.prices.retrieve(product.id, { apiKey: process.env.STRIPE_SECRET_KEY });
 
             return {
-                id: product.id,
+                id: productData.id,
                 price: formatPrice(productPrice.unit_amount),
                 name: productData.name,
                 description: productData.description,
@@ -28,6 +28,28 @@ router.get("/products", async (req, res) => {
         }));
 
         await res.status(200).send({ data: productDetails });
+    } catch (error) {
+        await res.status(500).send({ error: error.message });
+    }
+});
+
+router.get("/products/:id", async (req, res) => {
+    try {
+        const product = await stripe.products.retrieve(req.params.id, { apiKey: process.env.STRIPE_SECRET_KEY });
+        const price = await stripe.prices.list({
+            active: true,
+            product: req.params.id
+        }, { apiKey: process.env.STRIPE_SECRET_KEY });
+
+        console.log(product);
+
+        await res.status(200).send({ data: {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            images: product.images,
+            price: formatPrice(price.data[0].unit_amount),
+        }});
     } catch (error) {
         await res.status(500).send({ error: error.message });
     }
