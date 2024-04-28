@@ -66,8 +66,6 @@ router.get("/products/:id", async (req, res) => {
             product: req.params.id
         }, { apiKey: process.env.STRIPE_SECRET_KEY });
 
-        console.log(product);
-
         await res.status(200).send({ data: {
             id: product.id,
             name: product.name,
@@ -83,9 +81,6 @@ router.get("/products/:id", async (req, res) => {
 
 router.post('/checkout', json(), async (req, res) => {
     const { email, userId, cart } = req.body;
-
-    console.log(email);
-    console.log(userId);
 
     if (!userId) {
         await res.status(400).send({ error: 'User ID is missing.' });
