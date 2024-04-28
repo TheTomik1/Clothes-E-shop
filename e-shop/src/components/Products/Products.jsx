@@ -70,9 +70,9 @@ const Products = () => {
             case 'nameDesc':
                 return b.name.localeCompare(a.name);
             case 'priceAsc':
-                return a.price - b.price;
+                return parseFloat(a.price.replace(/€|,/g, '')) - parseFloat(b.price.replace(/€|,/g, ''));
             case 'priceDesc':
-                return b.price - a.price;
+                return parseFloat(b.price.replace(/€|,/g, '')) - parseFloat(a.price.replace(/€|,/g, ''));
             default:
                 return 0;
         }

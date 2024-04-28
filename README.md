@@ -38,7 +38,7 @@ VITE_SUPABASE_ANON_KEY=
 You need to have Stripe CLI installed to run the following commands. To listen for events coming from Stripe, CLI is used to forward the events to the API server.
 ```
 stripe login
-stripe listen -e checkout.session.completed --forward-to http://localhost:3000/webhook
+stripe listen -e checkout.session.completed --forward-to http://localhost:3000/api/webhook
 ```
 
 ## Other
